@@ -20,10 +20,8 @@ console.log(ranger(0, 50));
 
 // Game object
 var game = {
-	// on correct guess, put corrects at plus
-	right : function() {
-		rights++;
-	},
+	// store time
+	time: 0,
 
 	// store questions into game object
 	questions : {
@@ -32,6 +30,32 @@ var game = {
 		hardQs : hardQs.slice() // copy array by value, not reference
 	},
 
+	// on correct guess, put corrects at plus
+	right : function() {
+		rights++;
+	},
+
+
+	decreaseTime : function() {
+		game.time--;
+		if(game.time >= 10){
+			$('#timer').html("<p>:" + game.time + "</p>");
+		}
+		else {
+			$('#timer').html("<p>:0" + game.time + "</p>")
+		}
+	},
+
+	increment : function() {
+		game.time = 30;
+		$('#timer').html("<p>:" + game.time + "</p>");
+			intervalID = setInterval(game.decreaseTime, 1000);
+			setTimeout(function() {
+				clearInterval(intervalID)
+				game.timeNext();
+			}, game.time * 1000);
+	},
+	
 	// spot for saving current question
 	current : Object,
 
@@ -60,6 +84,9 @@ var game = {
 			game.over();
 		}
 	},
+
+	// current music track
+	music: Object,
 
 	// display the questions on the screen
 	displayQ : function() {
@@ -90,28 +117,49 @@ var game = {
 		}
 
 		// display the div
-		$("#display").append(wholeDiv);
-
+		$("#display").html(wholeDiv);
 		//play music from current question
-		var music = new Audio(game.current.music);
-		music.play();
+		game.music = new Audio(game.current.music);
+		game.music.play();
+
+		// set and display timer
+		game.increment();
 	},
 
 	// check whether a clicked answer (sel) is the correct answer
 	checkA : function(sel) {
 		var whichA = sel.attr('data-answer');
-		correct = game.current[whichA].bool;
-		return correct;
+		// only return a value if question hasn't been answered yet.
+		if (whichA != "answered") {
+			var correct = game.current[whichA].bool;
+			return correct;
+		}
 	},
+
 	// if you chose the right answer, do this
 	rightNext : function() {
 		game.right();
-		$('#right-wrong').append("<h2>That's Right!</h2>");
+		$('#right-wrong').html("<h2>That's Right!</h2>");
+		game.music.pause();
+		game.choose();
+		game.displayQ();
+	},
 
-	},
+  // if you chose the wrong answer, do this 
 	wrongNext : function() {
-		$('#right-wrong').append("<h2>Wrong</h2>");
+		$('#right-wrong').html("<h2>Wrong</h2>");
+		game.music.pause();
+		game.choose();
+		game.displayQ();
 	},
+
+	timeNext : function() {
+		$('#right-wrong').html("<h2>Out of Time!</h2>");
+		game.music.pause();
+		game.choose();
+		game.displayQ();
+	},
+
 	// method for when user answers
 	user_answered : function (correct) {
 		if (correct) {
@@ -135,5 +183,6 @@ game.displayQ();
 
 $(document).on("click", ".answer", function() {
 	game.user_answered( game.checkA($(this)) );
+	$(".answer").attr("data-answer", "answered");
 });
 
