@@ -5,36 +5,46 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 
 	<title>Nostalgic Quizzer</title>
+
 	<!-- Reset Css -->
 	<link rel="stylesheet" href="assets/css/reset.css">
+
 	<!-- Latest compiled and minified CSS & JS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-	
+
+	<!-- Custom Styles -->
 	<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<!-- background layer changes image based on the games in the question -->
 <div id="background-layer">
 
-	<h1>Nostalgic Quizzer - 16-Bit Edition</h1>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+				<h1>16-Bit Trivia!</h1>
 
-	<div id="right-wrong">
+				<!-- Will tell the player if they're right or wrong -->
+				<div id="right-wrong">
 
-	</div>
+				</div>
 
-	<div id="timer">
-
-	</div>
-
-	<div id="display">
-		<p>Click to start!</p>
-		<button id="start-game">Start</button>
-
+				<!-- Main display: Start Screen, Questions & Timer, and Results -->
+				<div id="display">
+					<h2>Click the button to start!</h2>
+					<div id="button-are" class="text-center">
+						<button id="start-game">Start</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>
 
+<!-- Loads the questions and the app after the body loads -->
 <script src="assets/javascript/questions.js"></script>
 <script src="assets/javascript/app.js"></script>
 

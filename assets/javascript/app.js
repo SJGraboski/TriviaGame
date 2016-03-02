@@ -1,3 +1,5 @@
+/* Trivia App - Steve Graboski */
+
 /* A: Functions
 /* ================================ */
 
@@ -113,13 +115,56 @@ var game = {
 		}
 	},
 
-	// decrease the time on interval
+	// decrease the time on interval, display it
 	increment : function() {
-		$('#timer').html("<p>:" + game.time + "</p>");
+		$('#answers').append("<p id='timer'>:" + game.time + "</p>");
 			intervalID = setInterval(game.decreaseTime, 1000);
 			timeoutID = setTimeout(function() {
 				game.timeNext();
 			}, game.time * 1000);
+	},
+
+	// change background to game
+	bgChange : function(num){
+		$('#background-layer')
+		.css('background',
+				 'url(assets/images/'+ (game.current["answer" + num].gif) + ')  no-repeat center fixed')
+		.css('background-size', 'cover');
+	},
+
+	// display static background
+	bgStatic : function(){
+		$('#background-layer')
+		.css('background',
+				 'url(assets/images/static.gif)  no-repeat center fixed')
+		.css('background-size', 'cover');
+	},
+
+	// switch background every five seconds to represent each game
+	screenChange : function() {
+
+		// start the screen counter
+		var screenCounter = 1;
+
+		// create empty timeout and interval ids
+
+		// start with static, then change to game after a sec
+		game.bgStatic();
+		screenTimeoutID = setTimeout(function(){
+			game.bgChange(screenCounter);
+		}, 2000);
+
+		// every five seconds, change screen
+		screenIntervalID = setInterval(function() {
+			screenCounter++;
+			if (screenCounter === 5) {
+				screenCounter = 1;
+			}
+			game.bgStatic();
+			screenTimeoutID = setTimeout(function() {
+				game.bgChange(screenCounter)
+			}, 750);
+		}, 5000);
 	},
 
 	// play win sound
@@ -174,6 +219,9 @@ var game = {
 
 		// display timer
 		game.increment();
+
+		// display backgrounds
+		game.screenChange();
 	},
 
 	// check whether a clicked answer (sel) is the correct answer
@@ -192,9 +240,10 @@ var game = {
 	rightNext : function() {
 		game.thatsRight();
 		clearInterval(intervalID);
+		clearInterval(screenIntervalID);
 		clearTimeout(timeoutID);
-		$('#right-wrong').html("<h2>That's Right!</h2>");
-		$(".answer").attr("data-answer", "answered");
+		clearTimeout(screenTimeoutID);
+		$('#display').html("<h2>That's Right!</h2>");
 		game.music.pause();
 		game.rightSound();
 		setTimeout(game.areWeOn, 3000);
@@ -203,9 +252,11 @@ var game = {
   // if you chose the wrong answer, do this 
 	wrongNext : function() {
 		clearInterval(intervalID);
+		clearInterval(screenIntervalID);
 		clearTimeout(timeoutID);
-		$('#right-wrong').html("<h2>Wrong</h2>");
-		$(".answer").attr("data-answer", "answered");
+		clearTimeout(screenTimeoutID);
+		game.bgStatic()
+		$('#display').html("<h2>Sorry, that music isn't in this game...</h2>");
 		game.music.pause();
 		game.wrongSound();
 		setTimeout(game.areWeOn, 3000);
@@ -213,9 +264,11 @@ var game = {
 
 	timeNext : function() {
 		clearInterval(intervalID);
+		clearInterval(screenIntervalID);
 		clearTimeout(timeoutID);
-		$('#right-wrong').html("<h2>Out of Time!</h2>");
-		$(".answer").attr("data-answer", "answered");
+		clearTimeout(screenTimeoutID);
+		game.bgStatic()
+		$('#display').html("<h2>Out of Time!</h2>");
 		game.music.pause();
 		game.wrongSound();
 		setTimeout(game.areWeOn, 3000);
@@ -256,12 +309,15 @@ var game = {
 		}
 
 		// replay button
-		var replayButton = $('<button id="start-game">Start</button>');
+		var replayDiv = $('<div id="button-area" class="text-center">');
+		var replayButton = $('<button id="replay">Play Again?</button>');
+		replayDiv.append(replayButton);
 
 		// father the div, display it
-		resultsDiv.append(resultsHead, resultsText, resultsMessage, replayButton);
+		resultsDiv.append(resultsHead, resultsText, resultsMessage, replayDiv);
 		console.log(resultsDiv);
 		$('#display').html(resultsDiv);
+		game.reset();
 	},
 
 	// reset all game properties to defaults
@@ -283,9 +339,22 @@ $(document).on('click', '#start-game', function(){
 	$(this).remove();
 })
 
+// click replay button
+$(document).on('click', '#replay', function(){
+	game.choose();
+	game.displayQ();
+	$(this).remove();
+})
+
 // click answers
 $(document).on("click", ".answer", function() {
 	game.user_answered( game.checkA($(this)) );
+	var image = $(this).attr("data-answer")
+	console.log(game.current[image].gif);
+	$('#background-layer')
+	.css('background',
+			 'url(assets/images/' + game.current[image].gif +') no-repeat center fixed')
+	.css('background-size', 'cover')
 });
 
 // test of changing background image
