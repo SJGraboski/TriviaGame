@@ -288,3 +288,11 @@ $(document).on("click", ".answer", function() {
 	game.user_answered( game.checkA($(this)) );
 });
 
+// test of changing background image
+$(document).on("click", "h1", function() {
+	$('#background-layer')
+	.css('background',
+			 'url(assets/images/psiv.gif) no-repeat center fixed')
+	.css('background-size', 'cover')
+})
+
