@@ -24,7 +24,6 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
-				<h1>16-Bit Trivia!</h1>
 
 				<!-- Will tell the player if they're right or wrong -->
 				<div id="right-wrong">
@@ -33,15 +32,21 @@
 
 				<!-- Main display: Start Screen, Questions & Timer, and Results -->
 				<div id="display">
+					<h1>16-Bit Trivia!</h1>
 					<h2>Click the button to start!</h2>
 					<div id="button-are" class="text-center">
-						<button id="start-game">Start</button>
+						<button id="start-game" class="btn btn-primary">Start</button>
 					</div>
+					<p id="display-footer">Game designed by Steve Graboski, &copy;2016</p>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<!-- Display source of whatever background is displayed -->
+	<div id="source">
+		<a id="source-link" href="http://giphy.com/gifs/static-vcr-5rmQdXUaAzutq" target="_blank">Background Source</a>
+	</div>
 </div>
 
 <!-- Loads the questions and the app after the body loads -->

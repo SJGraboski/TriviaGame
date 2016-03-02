@@ -26,6 +26,9 @@ var game = {
 	// correct answer counter
 	rights : 0,
 
+	// store correct answer when questions guessed
+	correct: "",
+
 	// total number of questions
 	qTotal : easyQs.length + mediumQs.length + hardQs.length,
 
@@ -43,7 +46,7 @@ var game = {
 	music: Object,
 
 	// win sound
-	win: new Audio("assets/audio/win.mp3"),
+	win: new Audio("assets/audio/win.wav"),
 
 	// lose sound
 	lose: new Audio("assets/audio/lose.mp3"),
@@ -121,7 +124,7 @@ var game = {
 			intervalID = setInterval(game.decreaseTime, 1000);
 			timeoutID = setTimeout(function() {
 				game.timeNext();
-			}, game.time * 1000);
+			}, (game.time + 1) * 1000);
 	},
 
 	// change background to game
@@ -130,6 +133,9 @@ var game = {
 		.css('background',
 				 'url(assets/images/'+ (game.current["answer" + num].gif) + ')  no-repeat center fixed')
 		.css('background-size', 'cover');
+
+		// add source link for background image
+		$("#source-link").attr("href", game.current["answer" + num].gifSource);
 	},
 
 	// display static background
@@ -138,6 +144,8 @@ var game = {
 		.css('background',
 				 'url(assets/images/static.gif)  no-repeat center fixed')
 		.css('background-size', 'cover');
+		// add source link for background image
+		$("#source-link").attr("href", "http://giphy.com/gifs/static-vcr-5rmQdXUaAzutq");
 	},
 
 	// switch background every five seconds to represent each game
@@ -224,16 +232,20 @@ var game = {
 		game.screenChange();
 	},
 
-	// check whether a clicked answer (sel) is the correct answer
+	// get correct answer
+	getCorrect : function () {
+		for (var i = 1; i <= 4; i++){
+			if (game.current['answer' + i].bool){
+				game.correct = game.current['answer' + i].text;
+			}
+		}
+	},
+
+	// check correct answers
 	checkA : function(sel) {
 		var whichA = sel.attr('data-answer');
-
-		/* if the user already answered the question, 
-		 * don't return a value on a new click */
-		if (whichA != "answered") {
-			var correct = game.current[whichA].bool;
-			return correct;
-		}
+		var correct = game.current[whichA].bool;
+		return correct;
 	},
 
 	// if you chose the right answer, do this
@@ -244,9 +256,11 @@ var game = {
 		clearTimeout(timeoutID);
 		clearTimeout(screenTimeoutID);
 		$('#display').html("<h2>That's Right!</h2>");
+		game.getCorrect();
+		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
 		game.music.pause();
 		game.rightSound();
-		setTimeout(game.areWeOn, 3000);
+		setTimeout(game.areWeOn, 5000);
 	},
 
   // if you chose the wrong answer, do this 
@@ -256,10 +270,12 @@ var game = {
 		clearTimeout(timeoutID);
 		clearTimeout(screenTimeoutID);
 		game.bgStatic()
-		$('#display').html("<h2>Sorry, that music isn't in this game...</h2>");
+		$('#display').html("<h2>Wrong Game!</h2>");
+		game.getCorrect();
+		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
 		game.music.pause();
 		game.wrongSound();
-		setTimeout(game.areWeOn, 3000);
+		setTimeout(game.areWeOn, 5000);
 	},
 
 	timeNext : function() {
@@ -269,9 +285,11 @@ var game = {
 		clearTimeout(screenTimeoutID);
 		game.bgStatic()
 		$('#display').html("<h2>Out of Time!</h2>");
+		game.getCorrect();
+		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
 		game.music.pause();
 		game.wrongSound();
-		setTimeout(game.areWeOn, 3000);
+		setTimeout(game.areWeOn, 5000);
 	},
 
 	// method for when user answers
@@ -296,7 +314,7 @@ var game = {
 
 		// display a message based on number of correct choices compared to total q's
 		if (game.rights/game.qTotal < 1/3) {
-			var resultsMessage = $("<p id='message'>Eeesh...</p>");
+			var resultsMessage = $("<p id='message'>(Eeesh...)</p>");
 		}
 		else if (game.rights/game.qTotal < 2/3) {
 			var resultsMessage = $("<p id='message'>Could be better...</p>");
@@ -310,7 +328,7 @@ var game = {
 
 		// replay button
 		var replayDiv = $('<div id="button-area" class="text-center">');
-		var replayButton = $('<button id="replay">Play Again?</button>');
+		var replayButton = $('<button id="replay" class="btn btn-primary">Play Again?</button>');
 		replayDiv.append(replayButton);
 
 		// father the div, display it
