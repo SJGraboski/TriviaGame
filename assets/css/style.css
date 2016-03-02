@@ -1,0 +1,8 @@
+body {
+	background-image: url(../images/static.gif);
+	background-size: 100%;
+}
+
+h1, h2, h3, p {
+	color: #fff;
+}
