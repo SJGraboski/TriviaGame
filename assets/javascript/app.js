@@ -56,6 +56,7 @@ var game = {
 
 	// choose a question from available game.questions
 	choose : function() {
+
 		// run if easy questions exist
 		if (this.questions.easyQs.length != 0) {
 			var randomChoice = Math.floor( 
@@ -65,6 +66,7 @@ var game = {
 			game.questions.easyQs.splice(randomChoice, 1);
 			return true;
 		}
+
 		// if easy questions are done, run if there's medium questions
 		else if (this.questions.mediumQs.length != 0) {
 			var randomChoice = Math.floor( 
@@ -74,6 +76,7 @@ var game = {
 			game.questions.mediumQs.splice(randomChoice, 1);
 			return true;
 		}
+
 		// if medium questions are done, run if there's hard questions
 		else if (this.questions.hardQs.length != 0) {
 			var randomChoice = Math.floor( 
@@ -83,13 +86,14 @@ var game = {
 			game.questions.hardQs.splice(randomChoice, 1);
 			return true;
 		}
-		// if no questions left, give us a game over
+
+		// if no questions left, return false
 		else {
 			return false;
 		}
 	},
 
-	// test if we still have questions left based on return value of game.choose()
+	// test if we still have questions left (for use with game.choose())
 	areWeOn : function() {
 		if(game.choose()){
 			$('#right-wrong').empty();
@@ -111,10 +115,10 @@ var game = {
 	decreaseTime : function() {
 		game.time--;
 		if(game.time >= 10){
-			$('#timer').html("<p>:" + game.time + "</p>");
+			$('#timer').html(":" + game.time);
 		}
 		else {
-			$('#timer').html("<p>:0" + game.time + "</p>")
+			$('#timer').html(":0" + game.time)
 		}
 	},
 
@@ -129,6 +133,8 @@ var game = {
 
 	// change background to game
 	bgChange : function(num){
+
+		// change css with jQuery
 		$('#background-layer')
 		.css('background',
 				 'url(assets/images/'+ (game.current["answer" + num].gif) + ')  no-repeat center fixed')
@@ -140,21 +146,22 @@ var game = {
 
 	// display static background
 	bgStatic : function(){
+
+		// change css with jQuery
 		$('#background-layer')
 		.css('background',
 				 'url(assets/images/static.gif)  no-repeat center fixed')
 		.css('background-size', 'cover');
+
 		// add source link for background image
 		$("#source-link").attr("href", "http://giphy.com/gifs/static-vcr-5rmQdXUaAzutq");
 	},
 
-	// switch background every five seconds to represent each game
+	// background switching on interval
 	screenChange : function() {
 
 		// start the screen counter
 		var screenCounter = 1;
-
-		// create empty timeout and interval ids
 
 		// start with static, then change to game after a sec
 		game.bgStatic();
@@ -175,6 +182,14 @@ var game = {
 		}, 5000);
 	},
 
+		// clear timeouts and intervals
+	clearTimes : function () {
+		clearInterval(intervalID);
+		clearInterval(screenIntervalID);
+		clearTimeout(timeoutID);
+		clearTimeout(screenTimeoutID);
+	},
+
 	// play win sound
 	rightSound : function () {
 		game.win.play();
@@ -191,7 +206,7 @@ var game = {
 		// set timer to 30
 		game.time = 30;
 
-		// Set up div with random q assortment
+		// Set up div with random question assortment
 		var wholeDiv = $('<div id="answers">');
 		var questionHeader = $("<h2>What game is this song from?</h2>");
 		wholeDiv.append(questionHeader);
@@ -221,6 +236,7 @@ var game = {
 
 		// display the div
 		$("#display").html(wholeDiv);
+
 		//play music from current question
 		game.music = new Audio(game.current.music);
 		game.music.play();
@@ -228,68 +244,17 @@ var game = {
 		// display timer
 		game.increment();
 
-		// display backgrounds
+		// display game backgrounds
 		game.screenChange();
 	},
 
-	// get correct answer
+	// get the correct answer
 	getCorrect : function () {
 		for (var i = 1; i <= 4; i++){
 			if (game.current['answer' + i].bool){
 				game.correct = game.current['answer' + i].text;
 			}
 		}
-	},
-
-	// check correct answers
-	checkA : function(sel) {
-		var whichA = sel.attr('data-answer');
-		var correct = game.current[whichA].bool;
-		return correct;
-	},
-
-	// if you chose the right answer, do this
-	rightNext : function() {
-		game.thatsRight();
-		clearInterval(intervalID);
-		clearInterval(screenIntervalID);
-		clearTimeout(timeoutID);
-		clearTimeout(screenTimeoutID);
-		$('#display').html("<h2>That's Right!</h2>");
-		game.getCorrect();
-		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
-		game.music.pause();
-		game.rightSound();
-		setTimeout(game.areWeOn, 5000);
-	},
-
-  // if you chose the wrong answer, do this 
-	wrongNext : function() {
-		clearInterval(intervalID);
-		clearInterval(screenIntervalID);
-		clearTimeout(timeoutID);
-		clearTimeout(screenTimeoutID);
-		game.bgStatic()
-		$('#display').html("<h2>Wrong Game!</h2>");
-		game.getCorrect();
-		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
-		game.music.pause();
-		game.wrongSound();
-		setTimeout(game.areWeOn, 5000);
-	},
-
-	timeNext : function() {
-		clearInterval(intervalID);
-		clearInterval(screenIntervalID);
-		clearTimeout(timeoutID);
-		clearTimeout(screenTimeoutID);
-		game.bgStatic()
-		$('#display').html("<h2>Out of Time!</h2>");
-		game.getCorrect();
-		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
-		game.music.pause();
-		game.wrongSound();
-		setTimeout(game.areWeOn, 5000);
 	},
 
 	// method for when user answers
@@ -300,6 +265,56 @@ var game = {
 		if (!correct) {
 			game.wrongNext();
 		}
+	},
+
+	// check if user picked correct answers
+	checkA : function(sel) {
+		var whichA = sel.attr('data-answer');
+		var correct = game.current[whichA].bool;
+		return correct;
+	},
+
+	// if you chose the right answer, do this
+	rightNext : function() {
+		game.thatsRight();
+		game.clearTimes();
+		$('#display').html("<h2>That's Right!</h2>");
+		game.getCorrect();
+		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
+		game.music.pause();
+		game.rightSound();
+		setTimeout(game.areWeOn, 5000);
+	},
+
+  // if you chose the wrong answer, do this 
+	wrongNext : function() {
+		game.clearTimes();
+		game.bgStatic()
+		$('#display').html("<h2>Wrong Game!</h2>");
+		game.getCorrect();
+		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
+		game.music.pause();
+		game.wrongSound();
+		setTimeout(game.areWeOn, 5000);
+	},
+
+	timeNext : function() {
+		game.clearTimes();
+		game.bgStatic()
+		$('#display').html("<h2>Out of Time!</h2>");
+		game.getCorrect();
+		$('#display').append("<p>The correct answer was " + game.correct + "</p>");
+		game.music.pause();
+		game.wrongSound();
+		setTimeout(game.areWeOn, 5000);
+	},
+
+	// reset all game properties to defaults
+	reset: function() {
+		this.questions.easyQs = easyQs.slice(); 
+		this.questions.mediumQs = mediumQs.slice(); 
+		this.questions.hardQs = hardQs.slice();
+		this.rights = 0;
 	},
 
 	// what to do on game over
@@ -337,14 +352,6 @@ var game = {
 		$('#display').html(resultsDiv);
 		game.reset();
 	},
-
-	// reset all game properties to defaults
-	reset: function() {
-		this.questions.easyQs = easyQs.slice(); 
-		this.questions.mediumQs = mediumQs.slice(); 
-		this.questions.hardQs = hardQs.slice();
-		this.rights = 0;
-	}
 }
 
 /* C: Calls / Inputs
@@ -374,12 +381,4 @@ $(document).on("click", ".answer", function() {
 			 'url(assets/images/' + game.current[image].gif +') no-repeat center fixed')
 	.css('background-size', 'cover')
 });
-
-// test of changing background image
-$(document).on("click", "h1", function() {
-	$('#background-layer')
-	.css('background',
-			 'url(assets/images/psiv.gif) no-repeat center fixed')
-	.css('background-size', 'cover')
-})
 

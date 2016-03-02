@@ -20,8 +20,12 @@ h2 {
 	margin-bottom: 20px;
 }
 
-p#display-footer {
-	font-size:16px;
+p {
+	font-size: 18px;
+}
+
+#display p#display-footer {
+	font-size:14px;
 	margin-top: 20px;
 }
 
@@ -36,14 +40,13 @@ div#background-layer {
 }
 
 div#display{
-	border-radius: 5px;
+	border-radius: 7px;
 	background-color: rgba(0, 0, 0, 0.6);
 	margin-top: 40px;
 	padding: 20px 20px 10px 20px;
 }
 
 div.answer p {
-	font-size: 18px;
 	cursor: pointer;
 	-webkit-transition: color .25s;
 	transition: color .25s;
@@ -53,7 +56,7 @@ div.answer p:hover{
 	color: orange;
 }
 
-p#timer {
+div#display p#timer {
 	font-size: 48px;
 	margin-top: 20px;
 	margin-bottom: 0;
