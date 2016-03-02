@@ -65,7 +65,7 @@ var mario = new Question (
 );
 
 var sonic = new Question (
-	'easy', 'assets/audio/sonic.ogg',
+	'easy', 'assets/audio/sonic.mp3',
 	"Sonic the Hedgehog 2 (Genesis, 1992)", 'sonic2.gif', "http://giphy.com/gifs/9kRYK16SPEpXy", true,
 	"Sonic the Hedgehog 3 (Genesis, 1994)", 'sonic3.gif', "http://giphy.com/gifs/sega-genesis-sonic-3-the-hedgehog-55r9sLPHFciUo", false,
 	"Vectorman (Genesis, 1995)", 'vectorman.gif', "http://giphy.com/gifs/sega-genesis-vectorman-h0AGKlfmj8hu8", false,
